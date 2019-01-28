@@ -152,6 +152,9 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
   // Get retirement date.
   $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = $membership['membership_id']");
   $retirementDate = CRM_Core_DAO::singleValueQuery("SELECT retirement_date_42 FROM civicrm_value_athlete_info_33 WHERE entity_id = $cid");
+  if (empty($retirementDate)) {
+    return;
+  }
   $statusDate = strtotime($arguments['status_date']);
   $endDate = strtotime($arguments['end_date']);
   $expiryDate = date("Ymd", strtotime(date("Y-m-d", strtotime($retirementDate)) . " + 8 year"));
