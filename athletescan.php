@@ -137,3 +137,31 @@ function athletescan_civicrm_buildForm($formName, &$form) {
     }
   }
 }
+
+/**
+ * Implementation of hook_civicrm_alterCalculatedMembershipStatus
+ *
+ * @param array $membershipStatus the calculated membership status array
+ * @param array $arguments arguments used in the calculation
+ * @param array $membership the membership array from the calling function
+ */
+function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus, $arguments, $membership) {
+  if (empty($arguments['membership_type_id']) || !in_array($arguments['membership_type_id'], array(1))) {
+    return;
+  }
+  // Get retirement date.
+  $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = $membership['membership_id']");
+  $retirementDate = CRM_Core_DAO::singleValueQuery("SELECT retirement_date_42 FROM civicrm_value_athlete_info_33 WHERE entity_id = $cid");
+
+  $statusDate = strtotime($arguments['status_date']);
+  $endDate = strtotime($arguments['end_date']);
+  $expiryDate = strtotime('+ 8 years', $retirementDate);
+  if ($statusDate > $endDate && $statusDate >= $expiryDate) {
+    $membershipStatus['name'] = 'Expired';
+    $membershipStatus['id'] = 4;
+  }
+  if ($statusDate > $endDate && $statusDate <= $expiryDate) {
+    $membershipStatus['name'] = 'Grace';
+    $membershipStatus['id'] = 3;
+  }
+}
