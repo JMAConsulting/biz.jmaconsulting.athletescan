@@ -155,8 +155,8 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
   if (empty($retirementDate)) {
     return;
   }
-  $statusDate = strtotime($arguments['status_date']);
-  $endDate = strtotime($arguments['end_date']);
+  $statusDate = $arguments['status_date'];
+  $endDate = $arguments['end_date'];
   $expiryDate = date("Ymd", strtotime(date("Y-m-d", strtotime($retirementDate)) . " + 8 year"));
 
   if ($statusDate > $endDate && $statusDate >= $expiryDate) {
