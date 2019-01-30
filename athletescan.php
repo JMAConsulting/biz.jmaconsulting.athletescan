@@ -150,7 +150,7 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
     return;
   }
   // Get retirement date.
-  $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = $membership['membership_id']");
+  $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = " . $membership['membership_id']);
   $retirementDate = CRM_Core_DAO::singleValueQuery("SELECT retirement_date_42 FROM civicrm_value_athlete_info_33 WHERE entity_id = $cid");
   if (empty($retirementDate)) {
     return;
@@ -166,5 +166,37 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
   if ($statusDate > $endDate && $statusDate <= $expiryDate) {
     $membershipStatus['name'] = 'Current';
     $membershipStatus['id'] = 2;
+  }
+}
+
+function athletescan_civicrm_pageRun(&$page) {
+  if (get_class($page) == "CRM_Contact_Page_View_Summary") {
+    $cid = $page->getVar('_contactId');
+
+    // Check if custom data present for contact.
+    $table = "civicrm_value_status_31";
+    $column = "status_non_member_40";
+    $status = CRM_Core_DAO::singleValueQuery("SELECT $column FROM $table WHERE entity_id = $cid");
+    if (!empty($status)) {
+      $page->assign('isHide', TRUE);
+    }
+    $statusesToIgnore = [
+      'id',
+      'entity_id',
+    ];
+    $selectedStatus = CRM_Core_DAO::executeQuery("SELECT * FROM $table WHERE entity_id = $cid")->fetchAll()[0];
+    $athTable = "civicrm_value_athlete_info_33";
+    $selectedAth = CRM_Core_DAO::executeQuery("SELECT * FROM $athTable WHERE entity_id = $cid")->fetchAll()[0];
+    $selectedStatus = array_merge($selectedStatus, $selectedAth);
+    foreach ($selectedStatus as $key => $value) {
+      if ($value != '0' && empty($value) && !array_key_exists($key, array_flip($statusesToIgnore))) {
+        $label = CRM_Core_DAO::singleValueQuery("SELECT label FROM civicrm_custom_field WHERE column_name = '$key'");
+        $fieldsToHide[$key] = $label;
+      }
+    }
+    $page->assign('fieldsToHide', json_encode($fieldsToHide));
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => 'CRM/AC/ContactSummary.tpl',
+    ));
   }
 }
