@@ -164,7 +164,7 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
     $membershipStatus['id'] = 4;
   }
   if ($statusDate > $endDate && $statusDate <= $expiryDate) {
-    $membershipStatus['name'] = 'Grace';
-    $membershipStatus['id'] = 3;
+    $membershipStatus['name'] = 'Current';
+    $membershipStatus['id'] = 2;
   }
 }
