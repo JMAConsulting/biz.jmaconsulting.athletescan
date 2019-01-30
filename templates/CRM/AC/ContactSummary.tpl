@@ -22,6 +22,18 @@ CRM.$(function($) {
     $('#crm-contactinfo-content > div.crm-inline-block-content > div:nth-child(4)').hide();
   });
 
+  {/literal}
+  {if $hideAth}
+    $('div.Athlete_Info').hide();
+  {/if}
+  {literal}
+
+  {/literal}
+  {if $hideStatus}
+    $('div.Status').hide();
+  {/if}
+  {literal}
+
   // Remove Permission checkbox
   $('div.Permission_checkbox').hide();
   

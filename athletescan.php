@@ -185,9 +185,17 @@ function athletescan_civicrm_pageRun(&$page) {
       'entity_id',
     ];
     $selectedStatus = CRM_Core_DAO::executeQuery("SELECT * FROM $table WHERE entity_id = $cid")->fetchAll()[0];
+    if (empty($selectedStatus)) {
+      $page->assign('hideStatus', TRUE);
+    }
     $athTable = "civicrm_value_athlete_info_33";
     $selectedAth = CRM_Core_DAO::executeQuery("SELECT * FROM $athTable WHERE entity_id = $cid")->fetchAll()[0];
-    $selectedStatus = array_merge($selectedStatus, $selectedAth);
+    if (!empty($selectedAth)) {
+      $selectedStatus = array_merge($selectedStatus, $selectedAth);
+    }
+    else {
+      $page->assign('hideAth', TRUE);
+    }
     foreach ($selectedStatus as $key => $value) {
       if ($value != '0' && empty($value) && !array_key_exists($key, array_flip($statusesToIgnore))) {
         $label = CRM_Core_DAO::singleValueQuery("SELECT label FROM civicrm_custom_field WHERE column_name = '$key'");
