@@ -177,7 +177,7 @@ function athletescan_civicrm_pageRun(&$page) {
     $table = "civicrm_value_status_31";
     $column = "status_non_member_40";
     $status = CRM_Core_DAO::singleValueQuery("SELECT $column FROM $table WHERE entity_id = $cid");
-    if (!empty($status)) {
+    if (!$status) {
       $page->assign('isHide', TRUE);
     }
     $statusesToIgnore = [

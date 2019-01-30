@@ -20,12 +20,6 @@ CRM.$(function($) {
   $('#crm-contactinfo-content > div.crm-inline-block-content > div:nth-child(4)').hide();
   $( document ).ajaxComplete(function( event, xhr, settings ) {
     $('#crm-contactinfo-content > div.crm-inline-block-content > div:nth-child(4)').hide();
-
-    var fieldsToHide = {/literal}{$fieldsToHide}{literal};
-    $.each(fieldsToHide, function(i, obj) {
-      var element = $("div.crm-label:contains('" + obj + "')");
-      element.parent().hide();
-    });
   });
 
   // Remove Permission checkbox
