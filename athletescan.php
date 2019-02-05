@@ -172,6 +172,13 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
 function athletescan_civicrm_pageRun(&$page) {
   if (get_class($page) == "CRM_Contact_Page_View_Summary") {
     $cid = $page->getVar('_contactId');
+    $demographics = CRM_Core_DAO::executeQuery("SELECT gender_id, birth_date FROM civicrm_contact WHERE id = $cid")->fetchAll()[0];
+    if (empty($demographics['gender_id'])) {
+      $page->assign('hideGender', TRUE);
+    }
+    if (empty($demographics['birth_date'])) {
+      $page->assign('hideDOB', TRUE);
+    }
 
     // Check if custom data present for contact.
     $table = "civicrm_value_status_31";
@@ -183,10 +190,15 @@ function athletescan_civicrm_pageRun(&$page) {
     $statusesToIgnore = [
       'id',
       'entity_id',
+      'membership_or_other_status_37',
+      'status_non_member_40',
+      'ability_41',
+      'sport_43',
+      'discipline_44',
     ];
     $selectedStatus = CRM_Core_DAO::executeQuery("SELECT * FROM $table WHERE entity_id = $cid")->fetchAll()[0];
     if (empty($selectedStatus)) {
-      $page->assign('hideStatus', TRUE);
+      //$page->assign('hideStatus', TRUE);
     }
     $athTable = "civicrm_value_athlete_info_33";
     $selectedAth = CRM_Core_DAO::executeQuery("SELECT * FROM $athTable WHERE entity_id = $cid")->fetchAll()[0];
@@ -195,6 +207,13 @@ function athletescan_civicrm_pageRun(&$page) {
     }
     else {
       $page->assign('hideAth', TRUE);
+    }
+    // More athlete info.
+    $infoTable = "civicrm_value_more_athlete__35";
+    $infoColumn = "other_name_95";
+    $infoStatus = CRM_Core_DAO::singleValueQuery("SELECT $infoColumn FROM $infoTable WHERE entity_id = $cid");
+    if (empty($infoStatus)) {
+      $page->assign('hideInfo', TRUE);
     }
     foreach ($selectedStatus as $key => $value) {
       if ($value != '0' && empty($value) && !array_key_exists($key, array_flip($statusesToIgnore))) {
