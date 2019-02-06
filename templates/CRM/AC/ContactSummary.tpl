@@ -68,17 +68,50 @@ CRM.$(function($) {
   // Reorder fields
   var sport = $("div.crm-label:textEquals('Sport')").parent();
   var nonmember = $("div.crm-label:textEquals('Status non-member')").parent();
-  var discipline = $("div.crm-label:textEquals('Discipline-Alpine')").parent();
+  var discipline = $("div.crm-label:contains('Discipline')").parent();
   var para = $("div.crm-label:contains('Are you a para athlete?')").parent();
-  sport.insertAfter(nonmember);
-  discipline.insertAfter(sport);
-  para.insertAfter(discipline);
+  var retirement = $("div.crm-label:textEquals('Retirement date')").parent();
+  var sportorg = $("div.crm-label:textEquals('Sport organization')").parent();
+  var org = $("div.crm-label:textEquals('Organization/Organisation')").parent();
+  retirement.insertAfter(nonmember);
+  para.insertAfter(retirement);
+  sport.insertAfter(para);
+  sportorg.insertAfter(sport);
+  org.insertAfter(sportorg);
+  discipline.insertAfter(org);
+  $('div.Athlete_Info').hide();
+
+  // Address fields.
+  var permaddress = $("div.crm-label:contains('Permanent Address')").parent().parent().parent();
+  var hometownaddress = $("div.crm-label:contains('Home town Address')").parent().parent().parent();
+  
 
   $('div.contactTopBar > div.contactCardLeft').prepend($('div.Status'));
-  $('#email-block').insertAfter($('div.Status'));
+  $('div.crm-summary-demographic-block').insertAfter($('div.Status'));
+  $('#email-block').insertAfter($('div.crm-summary-demographic-block'));
   $('#phone-block').insertAfter($('#email-block'));
+  hometownaddress.insertBefore($('#email-block'));
+  permaddress.insertAfter($('#email-block'));
   // Remove Permission checkbox
   $('div.Permission_checkbox').hide();
+
+  {/literal}
+  {if $hidenonmember}
+    $("div.crm-label:textEquals('Status non-member')").parent().hide();
+  {/if}
+  {literal}
+
+  {/literal}
+  {if $hidemember}
+    $("div.crm-label:textEquals('Status')").parent().hide();
+  {/if}
+  {literal}
+
+  {/literal}
+  {if !$hidemember and !$hidenonmember}
+    $(discipline).hide();
+  {/if}
+  {literal}
   
   // Remove all other statuses other than one selected.
   var fieldsToHide = {/literal}{$fieldsToHide}{literal};

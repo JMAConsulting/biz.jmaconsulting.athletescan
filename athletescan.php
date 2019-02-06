@@ -187,6 +187,14 @@ function athletescan_civicrm_pageRun(&$page) {
     if (!$status) {
       $page->assign('isHide', TRUE);
     }
+    else {
+      $page->assign('hidemember', TRUE);
+    }
+    $columnMember = "membership_or_other_status_37";
+    $statusMember = CRM_Core_DAO::singleValueQuery("SELECT $columnMember FROM $table WHERE entity_id = $cid");
+    if ($statusMember) {
+      $page->assign('hidenonmember', TRUE);
+    }
     $statusesToIgnore = [
       'id',
       'entity_id',
