@@ -149,6 +149,9 @@ function athletescan_civicrm_alterCalculatedMembershipStatus(&$membershipStatus,
   if (empty($arguments['membership_type_id']) || !in_array($arguments['membership_type_id'], array(1))) {
     return;
   }
+  if (empty($membership['membership_id'])) {
+    return;
+  }
   // Get retirement date.
   $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = " . $membership['membership_id']);
   $retirementDate = CRM_Core_DAO::singleValueQuery("SELECT retirement_date_42 FROM civicrm_value_athlete_info_33 WHERE entity_id = $cid");
